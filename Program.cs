@@ -8,7 +8,7 @@ namespace ChipSecuritySystem
 {
     public class Program
     {
-        public static List<ColorChip> GetOrganizedChips(string[] chips)
+        public static List<ColorChipExtended> GetOrganizedChips(string[] chips)
         {
             var chipOrganizer = new ChipOrganizer(chips);
             var organizeColorChips = chipOrganizer.OrganizeColorChips();

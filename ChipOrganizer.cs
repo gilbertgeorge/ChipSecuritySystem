@@ -10,9 +10,9 @@ namespace ChipSecuritySystem
         private Color START_COLOR = Color.Blue;
         private Color END_COLOR = Color.Green;
         
-        private readonly List<ColorChip> _colorChips = new List<ColorChip>();
+        private readonly List<ColorChipExtended> _colorChips = new List<ColorChipExtended>();
 
-        public ChipOrganizer(List<ColorChip> colorChips)
+        public ChipOrganizer(List<ColorChipExtended> colorChips)
         {
             this._colorChips = colorChips;
         }
@@ -27,12 +27,18 @@ namespace ChipSecuritySystem
                     var startColor = chipArray[0].Replace("[", string.Empty);
                     var endColor = chipArray[1].Replace("]", string.Empty);
 
-                    //Bypass invalid chips and proceed with remaining chips?
-                    var startChip = (Color)System.Enum.Parse(typeof(Color), startColor);
-                    var endChip = (Color)System.Enum.Parse(typeof(Color), endColor);
+                    //Bypass invalid chips and proceed with remaining chips
+                    var validColors = Enum.GetNames(typeof(Color)).ToList();
+                    if (!validColors.Contains(startColor) && !validColors.Contains(endColor))
+                    {
+                        continue;
+                    }
+                    
+                    var startChip = (Color)Enum.Parse(typeof(Color), startColor);
+                    var endChip = (Color)Enum.Parse(typeof(Color), endColor);
 
                     var colorChips = this._colorChips;
-                    colorChips?.Add(new ColorChip(startChip, endChip));
+                    colorChips?.Add(new ColorChipExtended(startChip, endChip));
                 }
             }
             catch (Exception e)
@@ -42,12 +48,12 @@ namespace ChipSecuritySystem
             }
         }
 
-        public void AddColorChip(ColorChip colorChip)
+        public void AddColorChip(ColorChipExtended colorChip)
         {
             this._colorChips.Add(colorChip);
         }
         
-        public List<ColorChip> GetColorChips()
+        public List<ColorChipExtended> GetColorChips()
         {
             return this._colorChips;
         }
@@ -62,12 +68,11 @@ namespace ChipSecuritySystem
             return sb.ToString();
         }
         
-        public List<ColorChip> OrganizeColorChips()
+        public List<ColorChipExtended> OrganizeColorChips()
         {
             try
             {
-                var colorChips = this._colorChips;
-                var largestColorChipCollection = new List<ColorChip>();
+                var largestColorChipList = new List<ColorChipExtended>();
                 var potentialStartChips = this._colorChips.Where(x => x.StartColor == START_COLOR).ToList();
                 var potentialEndChips = this._colorChips.Where(x => x.EndColor == END_COLOR).ToList();
                 
@@ -77,26 +82,28 @@ namespace ChipSecuritySystem
                 //Need to find another way to solve this problem -- need to refactor with checking visitation
                 foreach (var potentialStartChip in potentialStartChips)
                 {
-                    var colorChipCollection = new List<ColorChip> { potentialStartChip };
+                    var colorChips = this._colorChips;
+                    var potentiallyLargestChipList = new List<ColorChipExtended> { potentialStartChip };
                     var currentColorChip = potentialStartChip;
                     while (currentColorChip.EndColor != END_COLOR)
                     {
-                        var nextColorChip = colorChips.FirstOrDefault(x => x.StartColor == currentColorChip.EndColor);
+                        var nextColorChip = colorChips.FirstOrDefault(x => 
+                            x.StartColor == currentColorChip.EndColor);
                         if (nextColorChip == null)
                             break;
-                        colorChipCollection.Add(nextColorChip);
+                        potentiallyLargestChipList.Add(nextColorChip);
                         currentColorChip = nextColorChip;
                     }
-                    if (colorChipCollection.Count > largestColorChipCollection.Count)
-                        largestColorChipCollection = colorChipCollection;
+                    if (potentiallyLargestChipList.Count > largestColorChipList.Count)
+                        largestColorChipList = potentiallyLargestChipList;
                 }
 
-                if(largestColorChipCollection != null &&
-                   (largestColorChipCollection.FirstOrDefault().StartColor != START_COLOR ||
-                    largestColorChipCollection.LastOrDefault().EndColor != END_COLOR))
+                if(largestColorChipList != null &&
+                   (largestColorChipList.FirstOrDefault().StartColor != START_COLOR ||
+                    largestColorChipList.LastOrDefault().EndColor != END_COLOR))
                     throw new Exception(Constants.ErrorMessage);
                 
-                return largestColorChipCollection;
+                return largestColorChipList;
             }
             catch (Exception e)
             {

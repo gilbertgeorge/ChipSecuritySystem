@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ChipSecuritySystem
 {
@@ -10,12 +9,8 @@ namespace ChipSecuritySystem
         private Color START_COLOR = Color.Blue;
         private Color END_COLOR = Color.Green;
         
-        private readonly List<ColorChipExtended> _colorChips = new List<ColorChipExtended>();
-
-        public ChipOrganizer(List<ColorChipExtended> colorChips)
-        {
-            this._colorChips = colorChips;
-        }
+        private readonly List<ColorChip> _colorChips = new List<ColorChip>();
+        private readonly List<List<ColorChip>> _validSolutions = new List<List<ColorChip>>();
 
         public ChipOrganizer(string[] chipString)
         {
@@ -37,8 +32,8 @@ namespace ChipSecuritySystem
                     var startChip = (Color)Enum.Parse(typeof(Color), startColor);
                     var endChip = (Color)Enum.Parse(typeof(Color), endColor);
 
-                    var colorChips = this._colorChips;
-                    colorChips?.Add(new ColorChipExtended(startChip, endChip));
+                    var colorChips = _colorChips;
+                    colorChips?.Add(new ColorChip(startChip, endChip));
                 }
             }
             catch (Exception e)
@@ -48,68 +43,54 @@ namespace ChipSecuritySystem
             }
         }
 
-        public void AddColorChip(ColorChipExtended colorChip)
+        public List<ColorChip> GetLongestSolution()
         {
-            this._colorChips.Add(colorChip);
-        }
-        
-        public List<ColorChipExtended> GetColorChips()
-        {
-            return this._colorChips;
-        }
-        
-        public string PrintColorChips()
-        {
-            var sb = new StringBuilder();
-            foreach (var colorChip in this._colorChips)
+            if (this._validSolutions.Count == 0)
+                throw new Exception(Constants.ErrorMessage);
+            
+            var longestValidList = new List<ColorChip>();
+            foreach (var colorChipList in _validSolutions.Where(colorChipList =>
+                         colorChipList.Count > longestValidList.Count))
             {
-                sb.AppendLine(colorChip.ToString());
+                longestValidList = colorChipList;
             }
-            return sb.ToString();
+            return longestValidList;
         }
         
-        public List<ColorChipExtended> OrganizeColorChips()
+        public void GenerateAllValidSolutions()
         {
-            try
+            //Get all possible combinations of chips
+            //Poor time complexity - other solutions might involve using graphs
+            var powerSet = SetManipulation.GetPowerSet(_colorChips);
+            foreach (var colorChipList in powerSet)
             {
-                var largestColorChipList = new List<ColorChipExtended>();
-                var potentialStartChips = this._colorChips.Where(x => x.StartColor == START_COLOR).ToList();
-                var potentialEndChips = this._colorChips.Where(x => x.EndColor == END_COLOR).ToList();
-                
-                if(potentialStartChips.Count == 0 || potentialEndChips.Count == 0)
-                    throw new Exception(Constants.ErrorMessage);
-                
-                //Need to find another way to solve this problem -- need to refactor with checking visitation
-                foreach (var potentialStartChip in potentialStartChips)
+                var permutations = SetManipulation.GetPermutations(colorChipList);
+                foreach (var permutation in permutations)
                 {
-                    var colorChips = this._colorChips;
-                    var potentiallyLargestChipList = new List<ColorChipExtended> { potentialStartChip };
-                    var currentColorChip = potentialStartChip;
-                    while (currentColorChip.EndColor != END_COLOR)
-                    {
-                        var nextColorChip = colorChips.FirstOrDefault(x => 
-                            x.StartColor == currentColorChip.EndColor);
-                        if (nextColorChip == null)
-                            break;
-                        potentiallyLargestChipList.Add(nextColorChip);
-                        currentColorChip = nextColorChip;
-                    }
-                    if (potentiallyLargestChipList.Count > largestColorChipList.Count)
-                        largestColorChipList = potentiallyLargestChipList;
+                    if (ValidateColorChipList(permutation.ToList()))
+                        this._validSolutions.Add(permutation.ToList());
                 }
-
-                if(largestColorChipList != null &&
-                   (largestColorChipList.FirstOrDefault().StartColor != START_COLOR ||
-                    largestColorChipList.LastOrDefault().EndColor != END_COLOR))
-                    throw new Exception(Constants.ErrorMessage);
-                
-                return largestColorChipList;
             }
-            catch (Exception e)
+        }
+        
+        private bool ValidateColorChipList(List<ColorChip> colorChipList)
+        {
+            if (colorChipList == null || colorChipList.Count == 0)
+                return false;
+            
+            //Check if the first and last chip are valid
+            if (colorChipList.FirstOrDefault().StartColor != START_COLOR ||
+                colorChipList.LastOrDefault().EndColor != END_COLOR)
+                return false;
+            
+            //Check if the chips are connected
+            for (var i = 0; i < colorChipList.Count - 1; i++)
             {
-                Console.WriteLine(e);
-                throw new Exception(Constants.ErrorMessage);
+                if (colorChipList[i].EndColor != colorChipList[i + 1].StartColor)
+                    return false;
             }
+            
+            return true;
         }
 
     }

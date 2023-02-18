@@ -9,7 +9,7 @@ namespace ChipSecuritySystemTests
     [TestFixture]
     public class Tests
     {
-        private bool CompareColorChips(List<ColorChipExtended> expected, List<ColorChipExtended> actual)
+        private bool CompareColorChips(List<ColorChip> expected, List<ColorChip> actual)
         {
             if (expected.Count != actual.Count)
             {
@@ -24,11 +24,11 @@ namespace ChipSecuritySystemTests
         {
             // Arrange
             var input = new string []{"[Blue, Yellow]", "[Red, Green]", "[Yellow, Red]", "[Orange, Purple]"};
-            var expected = new List<ColorChipExtended>
+            var expected = new List<ColorChip>
             {
-                new ColorChipExtended(Color.Blue, Color.Yellow),
-                new ColorChipExtended(Color.Yellow, Color.Red),
-                new ColorChipExtended(Color.Red, Color.Green),
+                new ColorChip(Color.Blue, Color.Yellow),
+                new ColorChip(Color.Yellow, Color.Red),
+                new ColorChip(Color.Red, Color.Green),
             };
 
             // Act
@@ -43,9 +43,9 @@ namespace ChipSecuritySystemTests
         {
             // Arrange
             var input = new string []{"[Blue, Green]"};
-            var expected = new List<ColorChipExtended>
+            var expected = new List<ColorChip>
             {
-                new ColorChipExtended(Color.Blue, Color.Green)
+                new ColorChip(Color.Blue, Color.Green)
             };
 
             // Act
@@ -60,13 +60,13 @@ namespace ChipSecuritySystemTests
         {
             // Arrange
             var input = new string []{"[Blue, Green]", "[Green, Blue]", "[Blue, Green]", "[Green, Blue]", "[Blue, Green]", "[Orange, Purple]"};
-            var expected = new List<ColorChipExtended>
+            var expected = new List<ColorChip>
             {
-                new ColorChipExtended(Color.Blue, Color.Green),
-                new ColorChipExtended(Color.Green, Color.Blue),
-                new ColorChipExtended(Color.Blue, Color.Green),
-                new ColorChipExtended(Color.Green, Color.Blue),
-                new ColorChipExtended(Color.Blue, Color.Green),
+                new ColorChip(Color.Blue, Color.Green),
+                new ColorChip(Color.Green, Color.Blue),
+                new ColorChip(Color.Blue, Color.Green),
+                new ColorChip(Color.Green, Color.Blue),
+                new ColorChip(Color.Blue, Color.Green),
             };
 
             // Act
@@ -81,14 +81,14 @@ namespace ChipSecuritySystemTests
         {
             // Arrange
             var input = new string []{"[Blue, Red]", "[Blue, Yellow]", "[Yellow, Purple]", "[Purple, Orange]", "[Orange, Blue]", "[Red, Green]"};
-            var expected = new List<ColorChipExtended>
+            var expected = new List<ColorChip>
             {
-                new ColorChipExtended(Color.Blue, Color.Yellow),
-                new ColorChipExtended(Color.Yellow, Color.Purple),
-                new ColorChipExtended(Color.Purple, Color.Orange),
-                new ColorChipExtended(Color.Orange, Color.Blue),
-                new ColorChipExtended(Color.Blue, Color.Red),
-                new ColorChipExtended(Color.Red, Color.Green),
+                new ColorChip(Color.Blue, Color.Yellow),
+                new ColorChip(Color.Yellow, Color.Purple),
+                new ColorChip(Color.Purple, Color.Orange),
+                new ColorChip(Color.Orange, Color.Blue),
+                new ColorChip(Color.Blue, Color.Red),
+                new ColorChip(Color.Red, Color.Green),
             };
 
             // Act
@@ -105,7 +105,7 @@ namespace ChipSecuritySystemTests
             var input = new string []{""};
             
             // Act
-            var actual = new List<ColorChipExtended>();
+            var actual = new List<ColorChip>();
             Exception exception = null;
             try 
             {
@@ -127,11 +127,11 @@ namespace ChipSecuritySystemTests
         {
             // Arrange
             var input = new string []{"[Blue, Yellow]", "[Red, Green]", "[Yellow, Red]", "[Brown, Purple]"};
-            var expected = new List<ColorChipExtended>
+            var expected = new List<ColorChip>
             {
-                new ColorChipExtended(Color.Blue, Color.Yellow),
-                new ColorChipExtended(Color.Yellow, Color.Red),
-                new ColorChipExtended(Color.Red, Color.Green),
+                new ColorChip(Color.Blue, Color.Yellow),
+                new ColorChip(Color.Yellow, Color.Red),
+                new ColorChip(Color.Red, Color.Green),
             };
 
             // Act
@@ -148,7 +148,7 @@ namespace ChipSecuritySystemTests
             var input = new string []{"[Blue, Yellow]", "[Yellow, Red]", "[Orange, Purple]", "[Purple, Orange]"};
             
             // Act
-            var actual = new List<ColorChipExtended>();
+            var actual = new List<ColorChip>();
             Exception exception = null;
             try 
             {
@@ -172,7 +172,7 @@ namespace ChipSecuritySystemTests
             var input = new string []{"[Green, Yellow]", "[Yellow, Red]", "[Orange, Green]", "[Purple, Orange]"};
             
             // Act
-            var actual = new List<ColorChipExtended>();
+            var actual = new List<ColorChip>();
             Exception exception = null;
             try 
             {
@@ -196,7 +196,7 @@ namespace ChipSecuritySystemTests
             var input = new string []{"[Blue, Yellow]", "[Yellow, Red]", "[Orange, Green]", "[Purple, Green]"};
             
             // Act
-            var actual = new List<ColorChipExtended>();
+            var actual = new List<ColorChip>();
             Exception exception = null;
             try 
             {

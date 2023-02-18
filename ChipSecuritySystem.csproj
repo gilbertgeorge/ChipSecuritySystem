@@ -46,10 +46,10 @@
     <Compile Include="ChipOrganizer.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="ColorChip.cs" />
-    <Compile Include="ColorChipExtended.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SetManipulation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
